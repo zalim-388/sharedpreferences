@@ -13,34 +13,20 @@ class _FirstPageState extends State<FirstPage> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController addresscontroller = TextEditingController();
   TextEditingController phonecontroller = TextEditingController();
-
+  @override
   bool _selectedValue = false;
-  void inistate() async {
+  @override
+  void initState() {
     super.initState();
-    LoadData();
+    setdata();
   }
 
-  Future<void> LoadData() async {
+  Future<void> setdata() async {
     final prefs = await SharedPreferences.getInstance();
-    final Name = prefs.getString("Name") ?? "";
-    final Address = prefs.getString("Address");
-    final phonenumber = prefs.getString("phonenumber");
-    final gender = prefs.getBool("gender") ?? false;
-  }
-
-  void submit(
-    // TextEditingController namecontroller,
-    // TextEditingController addresscontroller,
-    // TextEditingController phonecontroller,
-    dynamic Name,
-    dynamic Address,
-    dynamic phonenumber,
-  ) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("Name", Name ?? "");
-    await prefs.setString("Address", Address ?? "");
-    await prefs.setString("phonenumber", phonenumber ?? "");
-    await prefs.setBool("gender", _selectedValue);
+    await prefs.setString('name', namecontroller.text);
+    await prefs.setString("Address", addresscontroller.text);
+    await prefs.setInt('phonenumber', int.parse(phonecontroller.text));
+    await prefs.setBool('Gender', _selectedValue);
   }
 
   Widget build(BuildContext context) {
@@ -157,21 +143,16 @@ class _FirstPageState extends State<FirstPage> {
               ),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    submit(namecontroller, addresscontroller, phonecontroller);
+                  onPressed: () async {
+                    await setdata();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return SecondPage(
-                            phonenumber: int.parse(phonecontroller.text.trim()),
-                            Name: namecontroller.text.trim(),
-                            Address: addresscontroller.text.trim(),
-                          );
+                          return SecondPage();
                         },
                       ),
                     );
-                    print(namecontroller.text);
                   },
                   child: Text(
                     "submit",
@@ -189,3 +170,10 @@ class _FirstPageState extends State<FirstPage> {
     );
   }
 }
+  // Future<void> submit() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString("Name", namecontroller.text.trim());
+  //   await prefs.setString("Address", addresscontroller.text.trim());
+  //   await prefs.setString("phonenumber", phonecontroller.text.trim());
+  //   await prefs.setBool("gender", _selectedValue);
+  // }
